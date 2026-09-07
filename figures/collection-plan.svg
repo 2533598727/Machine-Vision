@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 760" role="img" aria-labelledby="collection-plan-title collection-plan-desc">
+    <title id="collection-plan-title">文档图像视觉数据收集方案</title>
+    <desc id="collection-plan-desc">24份独立原稿经两台手机与五种光照得到240张场景图，配48张同机参考，经标注和质检后按原稿划分并验证OCR，质检失败返回采集。</desc>
+    <defs>
+      <marker id="collection-plan-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#627376" /></marker>
+      <marker id="collection-plan-arrow-accent" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#126d70" /></marker>
+      <marker id="collection-plan-arrow-link" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#a84c23" /></marker>
+    <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f3f7f6; color: #172326; }
+    main { width: min(100%, 960px); margin: 0 auto; }
+    svg { display: block; width: 100%; height: auto; letter-spacing: 0; }
+    .name { font: 600 20px 'Segoe UI', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; fill: #172326; }
+    .detail { font: 400 16px 'Segoe UI', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; fill: #627376; }
+    .tag { font: 400 12px Consolas, monospace; fill: #627376; }
+    .title { font: 400 28px 'Instrument Serif', 'Noto Serif SC', SimSun, serif; fill: #172326; }
+    .edge { fill: none; stroke: #627376; stroke-width: 1.6; marker-end: url(#collection-plan-arrow); }
+    .node { fill: #ffffff; stroke: #172326; stroke-width: 1.2; }
+  </style></defs>
+    <rect width="960" height="760" fill="#f3f7f6" />
+    <text class="title" x="40" y="48">文档图像视觉数据收集方案</text>
+    <text class="detail" x="40" y="80">计划规模 288 张 RGB 图像；RAW 副本与校准伴拍不重复计数</text>
+
+    <g aria-label="数据流">
+      <path class="edge" d="M296 180 H352" />
+      <path class="edge" d="M480 240 V288" />
+      <path class="edge" d="M792 240 V324 Q792 332 784 332 H608" />
+      <path class="edge" d="M480 376 V424" />
+      <path class="edge" d="M576 480 H664" />
+      <path class="edge" d="M480 536 V580" />
+      <path class="edge" d="M352 620 H328 Q320 620 320 612 V220 Q320 212 328 212 H352" stroke-dasharray="4 4" />
+      <path class="edge" d="M792 528 V580" />
+    </g>
+    <g aria-label="质检分支标签">
+      <rect x="604" y="448" width="32" height="24" fill="#f3f7f6" />
+      <text class="detail" x="620" y="468" text-anchor="middle">通过</text>
+      <rect x="488" y="544" width="56" height="24" fill="#f3f7f6" />
+      <text class="detail" x="496" y="564">不通过</text>
+    </g>
+
+    <g data-node="originals">
+      <rect class="node" x="40" y="120" width="256" height="120" rx="8" />
+      <text class="tag" x="56" y="144">01 / CONTENT</text>
+      <text class="name" x="56" y="176">24 份独立原稿</text>
+      <text class="detail" x="56" y="200">作业 / 试卷 / 板书 / 插图</text>
+      <text class="detail" x="56" y="224">每类 6 份 · 3 处采集地点</text>
+    </g>
+    <g data-node="capture">
+      <rect class="node" x="352" y="120" width="256" height="120" rx="8" />
+      <text class="tag" x="368" y="144">02 / CAPTURE</text>
+      <text class="name" x="368" y="176">240 张场景图像</text>
+      <text class="detail" x="368" y="200">24 份 × 2 台设备 × 5 条件</text>
+      <text class="detail" x="368" y="224">日光 / 荧光 / 暖光 / 影 / 混光</text>
+    </g>
+    <g data-node="reference">
+      <rect class="node" x="664" y="120" width="256" height="120" rx="8" />
+      <text class="tag" x="680" y="144">03 / REFERENCE</text>
+      <text class="name" x="680" y="176">48 张同机参考</text>
+      <text class="detail" x="680" y="200">24 份 × 2 台设备 × 1 参考</text>
+      <text class="detail" x="680" y="224">均匀照明 · 灰卡 / 色卡校验</text>
+    </g>
+    <g data-node="annotation">
+      <rect class="node" x="352" y="288" width="256" height="88" rx="8" />
+      <text class="name" x="480" y="324" text-anchor="middle">配准与质量标注</text>
+      <text class="detail" x="480" y="352" text-anchor="middle">ΔE00 / U / 阴影掩膜 / 转写</text>
+    </g>
+    <g data-node="quality-gate">
+      <polygon points="480 424,576 480,480 536,384 480" fill="#dcefed" stroke="#126d70" stroke-width="1.6" />
+      <text class="name" x="480" y="488" text-anchor="middle">质检合格？</text>
+    </g>
+    <g data-node="split">
+      <rect x="664" y="432" width="256" height="96" rx="8" fill="#dcefed" stroke="#126d70" stroke-width="1.6" />
+      <text class="name" x="680" y="464">按原稿分组划分</text>
+      <text class="detail" x="680" y="492">训练 / 验证 / 测试 = 16/4/4 稿</text>
+      <text class="detail" x="680" y="516">场景图 = 160 / 40 / 40 张</text>
+    </g>
+    <g data-node="recapture">
+      <rect class="node" x="352" y="580" width="256" height="80" rx="8" />
+      <text class="name" x="480" y="612" text-anchor="middle">返拍或重标</text>
+      <text class="detail" x="480" y="640" text-anchor="middle">保持配额 · 记录失败原因</text>
+    </g>
+    <g data-node="evaluation">
+      <rect class="node" x="664" y="580" width="256" height="80" rx="8" />
+      <text class="name" x="680" y="612">校正前后同条件验证</text>
+      <text class="detail" x="680" y="640">PSNR / SSIM / ΔE00 / CER / F1</text>
+    </g>
+
+    <g aria-label="质检说明">
+      <text class="name" x="40" y="440">质检与合规</text>
+      <text class="detail" x="40" y="472">全量隐私与参考配对复核</text>
+      <text class="detail" x="40" y="500">随机盲审 20% 质量标签</text>
+      <text class="detail" x="40" y="528">不可读 / 配准失败须返拍</text>
+      <text class="detail" x="40" y="556">保留可读的困难阴影样本</text>
+      <text class="detail" x="40" y="612">原稿、参考及增强同组</text>
+      <text class="detail" x="40" y="640">公开前核对授权并脱敏</text>
+    </g>
+    <line x1="40" y1="700" x2="920" y2="700" stroke="#d9e2e1" stroke-width="1" />
+    <text class="detail" x="40" y="732">矩形：操作</text>
+    <text class="detail" x="208" y="732">菱形：质量决策</text>
+    <text class="detail" x="408" y="732">实线：处理顺序</text>
+    <text class="detail" x="608" y="732">虚线：返工</text>
+    <text class="detail" x="776" y="732">状态：待采集</text>
+  </svg>

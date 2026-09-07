@@ -1,0 +1,21 @@
+{
+  "checks": "passed",
+  "pages": 5,
+  "words": 2575,
+  "references": 10,
+  "planned_scene_images": 240,
+  "planned_reference_images": 48,
+  "embedded_fonts": {
+    "/IHAIZV+TimesNewRomanPSMT": true,
+    "/BZIVMZ+SimSun": true,
+    "/IXFAWU+SimHei": true,
+    "/TQTHRL+TimesNewRomanPS-BoldMT": true,
+    "/YEUUOC+CMMI10": true,
+    "/AKHCZK+CMMI7": true,
+    "/VDVGTR+CMR10": true,
+    "/CAFSZL+CMEX10": true,
+    "/DDIEWW+CMSY10": true,
+    "/FKPJSN+CMR7": true,
+    "/PVTTLK+CMSY7": true
+  }
+}

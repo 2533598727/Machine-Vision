@@ -1,0 +1,50 @@
+\documentclass[UTF8,a4paper,zihao=5,fontset=none]{ctexart}
+\usepackage[margin=22mm,headheight=15pt,headsep=7mm,footskip=10mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage[unicode,colorlinks=true]{hyperref}
+
+\IfFontExistsTF{SimSun}{
+  \setCJKmainfont{SimSun}[BoldFont=SimHei]
+  \setCJKsansfont{Microsoft YaHei}
+}{
+  \IfFontExistsTF{Noto Serif CJK SC}{
+    \setCJKmainfont{Noto Serif CJK SC}
+    \setCJKsansfont{Noto Sans CJK SC}
+  }{
+    \setCJKmainfont{FandolSong-Regular}[BoldFont=FandolSong-Bold]
+    \setCJKsansfont{FandolHei-Regular}
+  }
+}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\definecolor{ink}{HTML}{172326}
+\definecolor{muted}{HTML}{627376}
+\definecolor{accent}{HTML}{126D70}
+\hypersetup{
+  pdftitle={文档图像偏色与光照不均：成因、建模与校正},
+  pdfsubject={Machine Vision P1},
+  pdfauthor={},
+  linkcolor=accent,citecolor=accent,urlcolor=accent
+}
+\color{ink}
+\linespread{1.42}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\setlength{\emergencystretch}{1em}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\ctexset{
+  section={format=\large\bfseries,beforeskip=1em,afterskip=0.5em},
+  subsection={format=\normalsize\bfseries,beforeskip=0.8em,afterskip=0.4em}
+}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{muted}Machine Vision / P1}
+\fancyhead[R]{\small\color{muted}文档图像质量技术综述}
+\fancyfoot[C]{\small\color{muted}\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\graphicspath{{../figures/}}

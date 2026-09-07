@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+tmp/
+.env
+.env.*
+data/raw/
+data/private/
+data/collected/
+*.dng
+*.DNG
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

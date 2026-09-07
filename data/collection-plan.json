@@ -1,0 +1,31 @@
+{
+  "status": "planned_not_collected",
+  "version": "1.0",
+  "content_types": ["homework", "exam", "portable_board", "teaching_illustration"],
+  "originals_per_type": 6,
+  "total_originals": 24,
+  "devices": ["phone_A", "phone_B"],
+  "device_requirement": "Two different smartphone brands; log exact model and ISP settings at capture time.",
+  "locations": ["classroom", "study", "laboratory"],
+  "lighting_conditions": ["diffuse_daylight", "fluorescent", "incandescent", "side_light_occlusion", "daylight_warm_mixed"],
+  "target_scene_images": 240,
+  "target_reference_images": 48,
+  "target_counted_rgb_images": 288,
+  "excluded_from_image_count": ["RAW sidecars", "calibration companion frames", "pilot frames", "rejected or replaced frames", "augmentations"],
+  "split_unit": "original_id_including_all_template_derivatives",
+  "split_originals_per_type": {"train": 4, "validation": 1, "test": 1},
+  "split_scene_images": {"train": 160, "validation": 40, "test": 40},
+  "split_reference_images": {"train": 32, "validation": 8, "test": 8},
+  "pilot_images": 20,
+  "days": 4,
+  "reviewers": 2,
+  "blind_quality_review_fraction": 0.2,
+  "consumables_budget_cny_max": 500,
+  "metrics": {
+    "color_cast": {"name": "median_gray_patch_delta_e_00", "low": "x < 3", "moderate": "3 <= x <= 8", "high": "x > 8", "note": "Not pure chromaticity: also save signed a* and b* offsets and human hue labels."},
+    "nonuniformity": {"name": "population_std(q) / mean(q)", "q": "scene_linear_luminance / reference_linear_luminance for 8 corresponding neutral patches", "low": "x < 0.05", "moderate": "0.05 <= x <= 0.15", "high": "x > 0.15", "note": "Boundary patches do not cover the interior; include shadow masks and a same-plane gray-board companion."},
+    "threshold_status": "project_conventions_to_calibrate_on_pilot_not_universal_standards"
+  },
+  "rejection_rules": {"clipped_content": true, "unreadable_strokes": true, "saturated_content_pixel_fraction_gt": 0.01, "fiducial_reprojection_rmse_px_gt": 2.0},
+  "public_release_policy": "Only original or explicitly authorized, de-identified, independently reviewed material. No raw student records or third-party images are present in this repository."
+}
