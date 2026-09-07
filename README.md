@@ -7,13 +7,6 @@ P1：文档图像偏色与光照不均的技术综述及视觉数据收集方案
 - [综述 PDF（LaTeX排版）](output/pdf/p1-review.pdf)
 - [采集方案示意图 PNG（2880×2280）](figures/collection-plan.png)
 - [完整综述 Markdown](output/review.md)
-
-正文 **2575字**：按汉字逐字计数、英文词与数字串各计1字，含摘要及采集方案；不含标题、章节名、关键词、行内与独立数学表达式、引文序号、图中文字及参考文献。正文包含2516个汉字、59个英文词与数字串，满足2500-3000字要求。不同软件的“字符数（含标点）”不是本口径。
-
-综述包含10篇真实文献，正文采用顺序编码引用；PDF引文可跳转参考文献，DOI可点击。内容包括成像物理、Gray World、White Patch、Retinex、色彩迁移、FC4、深度白平衡、文档光照校正，以及PSNR、SSIM、ΔE00和任务级评价。
-
-成像积分、PSNR、灰块亮度比及均匀性使用真正的LaTeX数学环境编译，包含标准分式、积分、上下标与3组自动公式编号，不是用普通文字或截图模拟公式。
-
 ## 数据状态
 
 **这是数据收集方案，不是已采集数据集。** 没有虚构采集记录、样本图片或实验分数。
@@ -72,10 +65,4 @@ New-Item -ItemType Directory -Force tmp/pdfs
 pdftoppm -scale-to 1400 -png output/pdf/p1-review.pdf tmp/pdfs/review
 ```
 
-生成文件位于 `output/` 与 `figures/`。[构建审计](output/build-audit.json)和[验证结果](output/verification.json)记录字数、引用、数量一致性、PDF字体嵌入及图像非空检查；最终PDF也已逐页目视检查。验证脚本不能替代真实数据和下游实验。
-
-## 版权与隐私
-
-本仓库只包含原创综述、方案、示意图、空白模板和构建代码，没有学生原图、教材扫描、第三方论文全文或FiveK照片。正式采集需取得适用授权，公开副本脱敏并移除定位信息；签名与身份映射不进入Git历史。第三方资源遵循各自许可，公开仓库不改变其版权。
-
-仓库名称采用 `Machine-Vision`，因为GitHub仓库名不支持空格；项目标题保留“Machine Vision”。
+生成文件位于 `output/` 与 `figures/`。
