@@ -18,6 +18,7 @@ def main():
     assert 2500 <= stats["total_words"] <= 3000
     assert len(references) >= 5 and len({r["doi"].lower() for r in references}) == len(references)
     assert stats["cited_reference_ids"] == [r["id"] for r in references]
+    assert stats["citation_first_appearance_order"] == [r["id"] for r in references]
     plan = json.loads((ROOT / "data/collection-plan.json").read_text(encoding="utf-8"))
     n_originals = len(plan["content_types"]) * plan["originals_per_type"]
     n_scenes = n_originals * len(plan["devices"]) * len(plan["lighting_conditions"])
@@ -50,6 +51,10 @@ def main():
     for ref in references:
         assert ref["doi"].lower() in compact_text, ref["doi"]
         assert "https://doi.org/" + ref["doi"].lower() in uri_links, ref["doi"]
+        if ref.get("language") == "zh":
+            assert re.sub(r"\s+", "", ref["title"]).lower() in compact_text, ref["title"]
+            for author in ref["authors"].split(", "):
+                assert author in compact_text, author
     for char in set(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff]", source.split("## 参考文献")[0])):
         assert char in text, f"Chinese character missing from PDF: {char}"
     fonts = {}
@@ -76,7 +81,9 @@ def main():
         variance = ImageStat.Stat(figure.convert("RGB")).var
         assert min(variance) > 50, "Diagram appears blank"
     result = {"checks": "passed", "pages": len(reader.pages), "words": stats["total_words"],
-              "references": len(references), "planned_scene_images": n_scenes,
+              "references": len(references),
+              "chinese_references": sum(ref.get("language") == "zh" for ref in references),
+              "planned_scene_images": n_scenes,
               "planned_reference_images": n_refs, "embedded_fonts": fonts}
     (ROOT / "output/verification.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

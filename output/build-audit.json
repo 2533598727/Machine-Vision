@@ -2,9 +2,9 @@
   "word_count": {
     "scope": "Abstract and section prose, including the collection plan; excludes title, headings, keywords, inline/display mathematics, citation numbers, figure text, and bibliography.",
     "counting_rule": "Each Han character counts as one; each Latin word or numeric token counts as one; punctuation and whitespace are excluded.",
-    "han_characters": 2516,
-    "latin_and_numeric_tokens": 59,
-    "total_words": 2575,
+    "han_characters": 2764,
+    "latin_and_numeric_tokens": 61,
+    "total_words": 2825,
     "required_min": 2500,
     "required_max": 3000,
     "cited_reference_ids": [
@@ -17,18 +17,33 @@
       7,
       8,
       9,
-      10
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "citation_first_appearance_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
     ]
   },
-  "references": 10,
+  "references": 14,
+  "chinese_references": 4,
   "data_status": "planned_not_collected",
-  "diagram": {
-    "issues": [],
-    "text_count": 38,
-    "node_count": 8,
-    "css_font": "\"Segoe UI\", \"Microsoft YaHei\", \"Noto Sans SC\", sans-serif",
-    "local_cjk_available": true
-  },
+  "diagram": null,
   "latex": {
     "engine": "Tectonic 0.17.0",
     "display_equations": 3,

@@ -30,11 +30,13 @@ Gray World以平均反射近似中性为前提，用各通道均值估计照明�
 
 Retinex以视觉对相对反射的感知为出发点[2]，常用对数域原图减去平滑背景来近似去除照明，多尺度版本融合不同空间尺度[3]。它能缓解缓慢变化的阴影，却可能在阴影边界产生光晕、放大暗部噪声，或把粗笔画和大色块误判为照明。文档应用宜结合纸面掩膜、边缘保持滤波与有限增益，不能把所有低频成分都当成应删除的背景。
 
+国内研究也探索了光照补偿与HSV空间多尺度Retinex的结合[4]，以及基于光照重映射的低照度增强[5]。这些方向为阴影区域亮度调整提供参考，但低照度增强与文档偏色校正并不等价：提高亮度后仍须验证纸面中性、批注颜色和浅笔画是否保留。
+
 ### 3.2 色彩迁移与深度学习
 
-Reinhard等通过匹配颜色空间中的均值与方差完成色彩迁移[4]，属于统计映射而非深度学习；参考图像改变后，目标风格也改变，因此不保证物理色彩正确。这一思路可扩展为网络学习参考风格、查找表或非线性映射，但训练目标必须从“好看”转向内容与颜色保真。
+Reinhard等通过匹配颜色空间中的均值与方差完成色彩迁移[6]，属于统计映射而非深度学习；参考图像改变后，目标风格也改变，因此不保证物理色彩正确。这一思路可扩展为网络学习参考风格、查找表或非线性映射，但训练目标必须从“好看”转向内容与颜色保真。
 
-FC4对局部光照估计学习置信度权重，再汇聚为全局照明[5]，缓解单一局部区域证据不足的问题；全局输出仍难直接处理空间混光。Deep White-Balance Editing学习已渲染sRGB图像的白平衡映射[6]，针对相机非线性处理后简单通道缩放失效的问题。DocTr将几何展开与光照校正分别建模[7]，说明文档任务需要同时关注形变和阴影，但其光照模块不能因此被视作传感器级色彩标定。
+FC4对局部光照估计学习置信度权重，再汇聚为全局照明[7]，缓解单一局部区域证据不足的问题；全局输出仍难直接处理空间混光。杨泽鹏等研究了多通道置信度加权颜色恒常性[8]，进一步体现估计证据可靠性的重要性；用于文档时，应单独检验大色块与少量彩色批注的干扰。Deep White-Balance Editing学习已渲染sRGB图像的白平衡映射[9]，针对相机非线性处理后简单通道缩放失效的问题。DocTr将几何展开与光照校正分别建模[10]，说明文档任务需要同时关注形变和阴影，但其光照模块不能因此被视作传感器级色彩标定。
 
 学习方法可用配对重建、结构及颜色损失约束，并用平滑照明先验限制任意改写。风险来自设备域偏移、参考误差和训练内容偏置，尤其可能误删浅笔迹。小样本更适合评估预训练网络或有限微调；大模型从零训练不可行，合成偏色也不能完全代替真实混光。
 
@@ -42,13 +44,15 @@ FC4对局部光照估计学习置信度权重，再汇聚为全局照明[5]，�
 
 方法选择首先取决于退化：均匀偏色优先验证中性区域与全局增益；空间阴影需要局部照明估计；已渲染图像及复杂耦合可引入学习模型。统计方法解释性强、成本低，但依赖场景假设；Retinex无需成对训练，却容易混淆背景与内容；深度方法表达力强，但泛化依赖数据分布，推理成本也更高。应保留不校正基线，分别测试白平衡、去阴影及联合校正，避免把几何改善误记为颜色收益。
 
+针对大面积单色表面的估计歧义，李悦敏等结合环境光传感器及其置信度估计光源颜色[11]，提示外部观测可以补充图像先验。但镜头旁的传感器不一定代表纸面各处照明，本方案也不假定手机具备已标定的环境光颜色测量能力。
+
 配对图像需先配准，在固定有效区域与相同色彩空间内比较。归一化像素的PSNR关注逐像素误差，其表达式为：
 
 $$
 \operatorname{PSNR}=10\log_{10}\!\left(\frac{1}{\operatorname{MSE}}\right)\,\mathrm{dB}
 $$
 
-SSIM比较亮度、对比度和结构[8]，但高分不保证批注色彩正确。$\Delta E_{00}$采用CIEDE2000[9]，须将图像正确转换到相同白点的CIELAB，并报告色卡、纸面与彩色内容的分区结果。另统计中性块亮度变异系数及OCR字符错误率，检查笔画保持。无配准参考时不报告全参考分数；照片参考仅是可重复的操作目标，不是绝对反射率真值。
+SSIM比较亮度、对比度和结构[12]，但高分不保证批注色彩正确。$\Delta E_{00}$采用CIEDE2000[13]，须将图像正确转换到相同白点的CIELAB，并报告色卡、纸面与彩色内容的分区结果。另统计中性块亮度变异系数及OCR字符错误率，检查笔画保持。无配准参考时不报告全参考分数；照片参考仅是可重复的操作目标，不是绝对反射率真值。
 
 ## 5 视觉数据收集方案
 
@@ -56,7 +60,7 @@ SSIM比较亮度、对比度和结构[8]，但高分不保证批注色彩正确�
 
 计划自行制作作业、试卷、可移动板书和教学插图各6份，共24份独立原稿，在教室、书房和实验室均衡分配。每稿用两台不同品牌手机，在漫射日光、荧光灯、白炽灯、侧光遮挡、日光与暖灯混合五种条件下各拍一次，得到$24\times2\times5=240$张；另为每稿每设备拍一张参考，共48张，总计288张，RAW副本不重复计数。此为待执行计划，不代表已采集。
 
-优先使用原创题目及绘图；真实作业须先获作者与必要监护人同意，遮蔽姓名、学号、成绩和人脸，发布副本移除定位元数据。教材图片未经许可不上传。FiveK含自然照片及专家审美修图[10]，只能按其逐文件许可作为可选预训练来源，不能当作文档校色真值；LoDoPaB-CT是断层重建数据，与本任务不匹配，故不纳入。公开仓库仅发布方案、空白模板及经审查的可公开材料。
+优先使用原创题目及绘图；真实作业须先获作者与必要监护人同意，遮蔽姓名、学号、成绩和人脸，发布副本移除定位元数据。教材图片未经许可不上传。FiveK含自然照片及专家审美修图[14]，只能按其逐文件许可作为可选预训练来源，不能当作文档校色真值；LoDoPaB-CT是断层重建数据，与本任务不匹配，故不纳入。公开仓库仅发布方案、空白模板及经审查的可公开材料。
 
 ### 5.2 拍摄与配对参考
 
@@ -93,19 +97,27 @@ $$
 
 [3] Jobson D J, Rahman Z, Woodell G A. A multiscale retinex for bridging the gap between color images and the human observation of scenes[J]. IEEE Transactions on Image Processing, 1997, 6(7): 965-976. DOI: 10.1109/83.597272. [来源](https://doi.org/10.1109/83.597272)
 
-[4] Reinhard E, Ashikhmin M, Gooch B, Shirley P. Color transfer between images[J]. IEEE Computer Graphics and Applications, 2001, 21(4): 34-41. DOI: 10.1109/38.946629. [来源](https://doi.org/10.1109/38.946629)
+[4] 王奎, 黄福珍. 基于光照补偿的HSV空间多尺度Retinex图像增强[J]. 激光与光电子学进展, 2022, 59(10): 1010004. DOI: 10.3788/LOP202259.1010004. [来源](https://doi.org/10.3788/LOP202259.1010004)
 
-[5] Hu Y, Wang B, Lin S. FC4: Fully Convolutional Color Constancy With Confidence-Weighted Pooling[C]. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2017: 4085-4094. DOI: 10.1109/CVPR.2017.43. [来源](https://openaccess.thecvf.com/content_cvpr_2017/html/Hu_FC4_Fully_Convolutional_CVPR_2017_paper.html)
+[5] 贾洪博, 石蕴玉, 刘翔, 赵静文. 基于光照重映射的低照度图像增强算法[J]. 激光与光电子学进展, 2021, 58(22): 2210014. DOI: 10.3788/LOP202158.2210014. [来源](https://doi.org/10.3788/LOP202158.2210014)
 
-[6] Afifi M, Brown M S. Deep White-Balance Editing[C]. Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2020: 1397-1406. DOI: 10.1109/CVPR42600.2020.00147. [来源](https://openaccess.thecvf.com/content_CVPR_2020/html/Afifi_Deep_White-Balance_Editing_CVPR_2020_paper.html)
+[6] Reinhard E, Ashikhmin M, Gooch B, Shirley P. Color transfer between images[J]. IEEE Computer Graphics and Applications, 2001, 21(4): 34-41. DOI: 10.1109/38.946629. [来源](https://doi.org/10.1109/38.946629)
 
-[7] Feng H, Wang Y, Zhou W, Deng J, Li H. DocTr: Document Image Transformer for Geometric Unwarping and Illumination Correction[C]. Proceedings of the 29th ACM International Conference on Multimedia, 2021: 273-281. DOI: 10.1145/3474085.3475388. [来源](https://doi.org/10.1145/3474085.3475388)
+[7] Hu Y, Wang B, Lin S. FC4: Fully Convolutional Color Constancy With Confidence-Weighted Pooling[C]. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2017: 4085-4094. DOI: 10.1109/CVPR.2017.43. [来源](https://openaccess.thecvf.com/content_cvpr_2017/html/Hu_FC4_Fully_Convolutional_CVPR_2017_paper.html)
 
-[8] Wang Z, Bovik A C, Sheikh H R, Simoncelli E P. Image quality assessment: From error visibility to structural similarity[J]. IEEE Transactions on Image Processing, 2004, 13(4): 600-612. DOI: 10.1109/TIP.2003.819861. [来源](https://doi.org/10.1109/TIP.2003.819861)
+[8] 杨泽鹏, 解凯, 李桐, 杨梦瑶, 杨斌. 多通道置信度加权颜色恒常性算法[J]. 光学学报, 2021, 41(11): 1133002. DOI: 10.3788/AOS202141.1133002. [来源](https://doi.org/10.3788/AOS202141.1133002)
 
-[9] Sharma G, Wu W, Dalal E N. The CIEDE2000 color-difference formula: Implementation notes, supplementary test data, and mathematical observations[J]. Color Research & Application, 2005, 30(1): 21-30. DOI: 10.1002/col.20070. [来源](https://www.ece.rochester.edu/~gsharma/ciede2000/)
+[9] Afifi M, Brown M S. Deep White-Balance Editing[C]. Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2020: 1397-1406. DOI: 10.1109/CVPR42600.2020.00147. [来源](https://openaccess.thecvf.com/content_CVPR_2020/html/Afifi_Deep_White-Balance_Editing_CVPR_2020_paper.html)
 
-[10] Bychkovsky V, Paris S, Chan E, Durand F. Learning photographic global tonal adjustment with a database of input/output image pairs[C]. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2011: 97-104. DOI: 10.1109/CVPR.2011.5995413. [来源](https://data.csail.mit.edu/graphics/fivek/)
+[10] Feng H, Wang Y, Zhou W, Deng J, Li H. DocTr: Document Image Transformer for Geometric Unwarping and Illumination Correction[C]. Proceedings of the 29th ACM International Conference on Multimedia, 2021: 273-281. DOI: 10.1145/3474085.3475388. [来源](https://doi.org/10.1145/3474085.3475388)
+
+[11] 李悦敏, 徐海松, 黄益铭, 杨敏航, 胡兵, 张云涛. 应用环境光传感器的颜色恒常性算法[J]. 光学学报, 2023, 43(14): 1433001. DOI: 10.3788/AOS230458. [来源](https://doi.org/10.3788/AOS230458)
+
+[12] Wang Z, Bovik A C, Sheikh H R, Simoncelli E P. Image quality assessment: From error visibility to structural similarity[J]. IEEE Transactions on Image Processing, 2004, 13(4): 600-612. DOI: 10.1109/TIP.2003.819861. [来源](https://doi.org/10.1109/TIP.2003.819861)
+
+[13] Sharma G, Wu W, Dalal E N. The CIEDE2000 color-difference formula: Implementation notes, supplementary test data, and mathematical observations[J]. Color Research & Application, 2005, 30(1): 21-30. DOI: 10.1002/col.20070. [来源](https://www.ece.rochester.edu/~gsharma/ciede2000/)
+
+[14] Bychkovsky V, Paris S, Chan E, Durand F. Learning photographic global tonal adjustment with a database of input/output image pairs[C]. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2011: 97-104. DOI: 10.1109/CVPR.2011.5995413. [来源](https://data.csail.mit.edu/graphics/fivek/)
 
 ## 图1 视觉数据收集方案
 

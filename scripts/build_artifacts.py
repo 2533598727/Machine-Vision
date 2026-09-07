@@ -39,7 +39,7 @@ def prose_statistics(source):
     prose = re.sub(r"\$[^$]+\$", "", "\n".join(paragraphs))
     han = len(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff]", prose))
     latin = len(re.findall(r"[A-Za-z0-9]+(?:[.\-][A-Za-z0-9]+)*", prose))
-    cited = sorted({int(value) for value in re.findall(r"\[(\d+)\]", body)})
+    citation_order = list(dict.fromkeys(int(value) for value in re.findall(r"\[(\d+)\]", body)))
     return {
         "scope": "Abstract and section prose, including the collection plan; excludes title, headings, keywords, inline/display mathematics, citation numbers, figure text, and bibliography.",
         "counting_rule": "Each Han character counts as one; each Latin word or numeric token counts as one; punctuation and whitespace are excluded.",
@@ -48,7 +48,8 @@ def prose_statistics(source):
         "total_words": han + latin,
         "required_min": 2500,
         "required_max": 3000,
-        "cited_reference_ids": cited,
+        "cited_reference_ids": sorted(citation_order),
+        "citation_first_appearance_order": citation_order,
     }
 
 
@@ -104,15 +105,23 @@ def reference_text(ref):
             f"DOI: {ref['doi']}.")
 
 
+def bibtex_authors(authors):
+    names = []
+    for name in authors.split(", "):
+        if re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", name):
+            names.append("{" + name + "}")
+        else:
+            family, initials = name.split(" ", 1)
+            names.append(family + ", " + initials)
+    return " and ".join(names)
+
+
 def bibliography_exports(source, references):
     bib = []
     for ref in references:
         field = "journal" if ref["type"] == "article" else "booktitle"
         fields = {
-            "author": " and ".join(
-                family + ", " + initials
-                for family, initials in (name.split(" ", 1) for name in ref["authors"].split(", "))
-            ),
+            "author": bibtex_authors(ref["authors"]),
             "title": "{" + ref["title"] + "}",
             field: ref["venue"],
             "year": str(ref["year"]),
@@ -183,7 +192,7 @@ def build_pdf(source, references, engine_override):
                                 "\n" + r"\label{eq:" + str(equation_count) + "}" + "\n" + r"\end{equation}")
             else:
                 document.append(latex_inline(token.content, reference_keys) + "\n")
-    document += [r"\clearpage", r"\begingroup\small\linespread{1.14}\selectfont", r"\begin{thebibliography}{99}"]
+    document += [r"\begingroup\small\linespread{1.14}\selectfont", r"\begin{thebibliography}{99}"]
     for ref in references:
         text = re.sub(r"^\[\d+\]\s*", "", reference_text(ref)).split(" DOI: ", 1)[0]
         document.append(r"\bibitem{" + ref["key"] + "}" + escape_latex(text) + "\n" +
@@ -240,11 +249,14 @@ def main():
     stats = prose_statistics(source)
     assert 2500 <= stats["total_words"] <= 3000, stats
     assert stats["cited_reference_ids"] == [ref["id"] for ref in references]
+    assert stats["citation_first_appearance_order"] == [ref["id"] for ref in references]
     geometry = None if args.skip_diagram else render_diagram(args.browser_channel)
     assert FIGURE_PATH.is_file(), "Generate the diagram before building the PDF."
     bibliography_exports(source, references)
     latex = build_pdf(source, references, args.tex_engine)
-    audit = {"word_count": stats, "references": len(references), "data_status": "planned_not_collected", "diagram": geometry, "latex": latex}
+    audit = {"word_count": stats, "references": len(references),
+             "chinese_references": sum(ref.get("language") == "zh" for ref in references),
+             "data_status": "planned_not_collected", "diagram": geometry, "latex": latex}
     (ROOT / "output/build-audit.json").write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(audit, indent=2, ensure_ascii=False))
     print(f"PDF: {PDF_PATH}")
