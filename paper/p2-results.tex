@@ -1,0 +1,109 @@
+\section{结果与曲线}
+\subsection{预处理对比及完整设置}
+表~\ref{tab:filters} 固定三层和 NMS，给出各预处理的十图平均重复率。该条件下高斯低通的 Harris、Shi-Tomasi、SIFT 分别为 $0.807,0.792,0.799$；而 Sobel 在理想低通下高于高斯低通。LoG 在理想低通和两种高通下的重复率均高于高斯低通。这些结果表明预处理与管线有交互作用，不能将同一滤波判为对所有方法统一最优。
+
+\begin{table}[H]
+\centering\small
+\caption{三层、NMS 开启时的重复率。每格为十图均值，数值越高表示本口径下重复点比例越大；结果来自七百五十行主矩阵中的三层子集。}
+\label{tab:filters}
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{lrrrrr}
+\toprule
+方法 & 不滤波 & 理想低通 & 高斯低通 & 理想高通 & 高斯高通\\
+\midrule
+Sobel & 0.213 & 0.567 & 0.397 & 0.474 & 0.400\\
+LoG & 0.382 & 0.560 & 0.508 & 0.545 & 0.551\\
+Harris & 0.680 & 0.661 & 0.807 & 0.658 & 0.610\\
+Shi-Tomasi & 0.747 & 0.673 & 0.792 & 0.691 & 0.688\\
+SIFT & 0.552 & 0.643 & 0.799 & 0.548 & 0.551\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+表~\ref{tab:full} 对应消融的完整设置，不是为每种方法逐一调出的最好配置。SIFT 在该设置下的条件定位误差最低，但运行时间高于其他四条管线；Harris 的重复率及正确率较高。LoG 的重复率 $0.508$ 并不能保证描述子匹配可信，其平均正确率仅为 $0.723$，平均接受匹配数为 $8.8$、正确匹配数为 $6.9$。比例和数量应同时查看，不能把本代理集的结果当作普遍的检测器排名。
+
+\begin{table}[H]
+\centering\small
+\caption{完整设置的四项指标。高斯低通、三层、NMS 开启；十图均值，正确率有效样本均为十。误差列为每图重复点中位误差的跨图平均，时间为消融运行阶段的单次计时均值。}
+\label{tab:full}
+\begin{tabular}{lrrrr}
+\toprule
+方法 & 重复率 & 匹配正确率 & 定位误差 / px & 时间 / ms\\
+\midrule
+Sobel & 0.397 & 0.744 & 1.313 & 342.4\\
+LoG & 0.508 & 0.723 & 1.545 & 363.2\\
+Harris & 0.807 & 0.972 & 0.960 & 348.1\\
+Shi-Tomasi & 0.792 & 0.971 & 1.003 & 327.6\\
+SIFT & 0.799 & 0.912 & 0.413 & 622.3\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{sample_matches.png}
+\caption{几何正确的匹配和少量错误匹配可以同时出现。第一组合成图的 SIFT 完整设置示例，左为参考、右为场景；仅画前四十个接受匹配，绿线误差不超过四参考像素，红线超过阈值。示例不能代替十图统计，也不是自采图。}
+\end{figure}
+
+\clearpage
+\section{组件消融与敏感性分析}
+表~\ref{tab:delta} 给出各关闭设置相对于完整设置的变化量。关闭外部金字塔使 Sobel、Harris、Shi-Tomasi、SIFT 的重复率降低，但 LoG 上升约四个百分点；同时 LoG 正确率上升约二十一个百分点。这与固定预算下的层候选竞争及不同尺度补丁支持域有关的解释相容，但当前结果不独立证明这一机制。
+
+关闭频域滤波时，Harris 和 SIFT 的重复率分别下降 $12.73$ 和 $24.64$ 个百分点，而 LoG 的正确率上升 $27.37$ 个百分点，平均正确匹配数由 $6.9$ 增到 $58.7$。因此高斯低通对该 LoG 管线在几何重复率和描述子可信度上产生不同方向的变化。其他四种方法的频域去除均降低重复率，不能由这一现象推出所有实际照片都应启用低通。
+
+\begin{table}[H]
+\centering\small
+\caption{消融变化量，单位为百分点，等于关闭设置均值减去完整设置均值；负值表示相应比例下降。P、F、N 分别表示关闭外部金字塔、频域滤波、共同 NMS。各设置保持响应阈值和最终特征预算不变。}
+\label{tab:delta}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{重复率变化 / pp} & \multicolumn{3}{c}{正确率变化 / pp}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+方法 & P & F & N & P & F & N\\
+\midrule
+Sobel & $-6.01$ & $-18.45$ & $-29.41$ & $+0.91$ & $+5.48$ & $+5.31$\\
+LoG & $+4.01$ & $-12.59$ & $-35.18$ & $+21.04$ & $+27.37$ & $-27.54$\\
+Harris & $-1.55$ & $-12.73$ & $-22.18$ & $+0.41$ & $-0.02$ & $+0.96$\\
+Shi-Tomasi & $-0.23$ & $-4.50$ & $-11.00$ & $+1.02$ & $+0.32$ & $+2.82$\\
+SIFT & $-5.11$ & $-24.64$ & $-14.27$ & $+0.43$ & $-7.07$ & $+4.55$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+关闭 NMS 时所有方法的重复率下降，但部分正确率和条件定位误差改善。Harris 的定位误差由 $0.960$ 降至 $0.585$ 像素，平均正确匹配数却由 $117.3$ 降至 $50.0$；SIFT 的正确率由 $0.912$ 升至 $0.958$，正确匹配数由 $88.2$ 降至 $72.9$。这说明更小的条件误差或更高的比例不等价于更高的覆盖与总匹配能力。无 NMS 的 Sobel、LoG 正确率只各有七、八个有效图对，无外部金字塔的 LoG 有九个；这些均值的样本集合不同，差值应谨慎解读。
+
+\clearpage
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{ablation_metrics.pdf}
+\caption{关闭组件并不使所有指标同方向变化。每种方法从左至右依次为 full、关闭外部金字塔、关闭频域、关闭共同 NMS；full 为高斯低通、三层、NMS 开启。误差棒是跨图样本标准差，不是置信区间；重复率和正确率坐标范围为零至 $1.02$，越界标准差部分不显示。定位误差针对几何重复点，时间含两图完整评测、不含 I/O。}
+\end{figure}
+图中运行时间也不是统一方向的收益证明。关闭频域使四种响应采样管线明显减少本次均值时间；SIFT 本次从 $622.3$ 变为 $691.9$ ms，反而上升。滤波会改变被 SIFT 内部处理的图像内容，可能影响候选数量和内部计算，但没有阶段计时证据，不能据此确认原因；单次测量及系统负载也限制了精确速度结论。
+
+\clearpage
+\subsection{图像数字尺度敏感性}
+\input{p2-scale-analysis.tex}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{repeatability_scale.pdf}
+\caption{图像尺度与预处理共同影响几何重复率。横轴为场景额外数字缩放倍率，参考图不变，三层和 NMS 固定开启。none 为不滤波，LP/HP 为低通/高通；每面板含五方法十图均值和样本标准差，以颜色、标记和线型区分。误差仍以参考图像素判断，比例坐标限定零至 $1.02$，越界标准差部分不显示；不代表真实拍摄距离曲线。}
+\end{figure}
+
+\clearpage
+\subsection{附加噪声敏感性}
+\input{p2-noise-analysis.tex}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{repeatability_noise.pdf}
+\caption{重复率随附加噪声变化的趋势依赖方法及预处理。横轴为场景额外高斯噪声标准差，单位 DN，即八位灰度级；三层与 NMS 固定，原生噪声和其他扰动仍保留。none、LP、HP 含义同尺度图；点为十图均值，误差棒为样本标准差，非置信区间。坐标限定零至 $1.02$，越界标准差部分不显示；零附加噪声并不意味着原图无噪声。}
+\end{figure}
+
+\clearpage
+\subsection{外部金字塔深度}
+高斯低通下，Sobel 的重复率从一层 $0.337$ 到二层 $0.399$，三层 $0.397$；Harris 从 $0.791$ 到 $0.805$、$0.807$；Shi-Tomasi 从 $0.790$ 到 $0.791$、$0.792$。SIFT 从 $0.748$ 到 $0.793$、$0.799$，LoG 则从 $0.548$ 降至 $0.517$、$0.508$。新增层的收益并不单调或普遍，两层到三层的变化还应结合标准差和额外计算代价判断。
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{repeatability_pyramid.pdf}
+\caption{增加外部金字塔深度不保证重复率持续提升。横轴是层数，一层表示仅原图、二三层分别加入 $1/2$ 与 $1/4$ 图像；最终点预算仍为二百二十，NMS 开启。五面板分别对应五预处理，点和误差棒为十图均值与样本标准差；比例坐标范围为零至 $1.02$，越界标准差部分不显示。SIFT 各设置均保留内部尺度空间，不能将该横轴解释为 SIFT 总尺度层数。}
+\end{figure}

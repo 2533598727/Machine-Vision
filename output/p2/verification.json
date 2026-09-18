@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "scope": "P2 synthetic fixture and report only; real data requirement not fulfilled",
+  "row_counts": {
+    "main_results.csv": 750,
+    "ablation_results.csv": 200,
+    "noise_results.csv": 1000,
+    "scale_results.csv": 1000
+  },
+  "total_evaluations": 2950,
+  "metric_invariants": "checked for all 2950 rows",
+  "zero_noise_and_unit_scale_consistency_rows": 500,
+  "full_ablation_vs_main_consistency_rows": 50,
+  "report_table_cells_checked": 75,
+  "code_sha256": "8a762a9c90bd6ea59be71630d7997edc72db56964dbb45f99ad613b5541262be",
+  "input_hashes_verified": 30,
+  "pdf_pages": 11,
+  "pdf_sha256": "6133492856888fc7fcb9e6cf1081720cb8c240cb989e9523c4c9aa46d0297027",
+  "pdf_visual_review": "all 11 pages inspected; affected pages re-rendered and rechecked",
+  "latex_quality_warnings": [],
+  "official_references": 6,
+  "citation_verification": "fresh-context verifier; all resolved, two original-author credits corrected",
+  "require_manual_rejection": "expected failure on synthetic fixture; manually tested",
+  "real_photos_available": false,
+  "manual_annotations_available": false,
+  "git_commit_or_push_performed": false
+}

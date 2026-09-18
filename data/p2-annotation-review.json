@@ -1,0 +1,13 @@
+{
+  "reviewer": "Codex assistant",
+  "review_method": "Every retained point pair inspected in magnified reference/scene patch atlases; ambiguous/cropped points removed.",
+  "human_verified": false,
+  "annotation_status": "assistant_visual_verified",
+  "samples": {
+    "IMG_0258": 23, "IMG_0259": 23, "IMG_0261": 24,
+    "IMG_0262": 24, "IMG_0263": 24, "IMG_0264": 24,
+    "IMG_0265": 20, "IMG_0266": 24, "IMG_0267": 22,
+    "IMG_0268": 20, "IMG_0269": 22
+  },
+  "notes": "250 assistant-produced point pairs, not certified student/human hand annotations. Coordinates are approximate visual landmarks with local grayscale registration assistance. Fitted planar geometry is approximate for curved pages."
+}

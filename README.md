@@ -2,6 +2,8 @@
 
 P1：文档图像偏色与光照不均的技术综述及视觉数据收集方案。
 
+P2：板书图像多尺度特征匹配质量评测与可重复性消融实验，见 [真实照片版说明与复现](P2_REAL_README.md)、[P2 实拍报告 PDF](output/pdf/p2-report-real.pdf)、[单一 Python 实现](p2_multiscale_feature_matching.py) 和 [P2 实拍提交包](output/p2-real-submission.zip)。本版使用 12 张教材页照片、11 个图对及 250 对助手制作并核对的对应点，每图 20–24 对；教材页与板书/试卷题材不同，助手标注不冒充学生亲手标注。照片保留在 Git 忽略的私人目录，提交包显式包含工作照片与标注。旧合成代理版仍保留作流程验证。
+
 ## 提交材料
 
 - [综述 PDF（LaTeX排版）](output/pdf/p1-review.pdf)

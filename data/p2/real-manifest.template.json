@@ -1,0 +1,16 @@
+{
+  "dataset_name": "p2_self_captured",
+  "dataset_status": "pending_capture_and_manual_annotation",
+  "samples": [
+    {"image_id": "real_01", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_01.jpg", "annotation": "annotations/real_01.json", "condition": {"lighting": "uniform", "scale": "normal", "blur": "sharp"}},
+    {"image_id": "real_02", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_02.jpg", "annotation": "annotations/real_02.json", "condition": {"lighting": "left_shadow", "scale": "normal", "blur": "sharp"}},
+    {"image_id": "real_03", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_03.jpg", "annotation": "annotations/real_03.json", "condition": {"lighting": "right_shadow", "scale": "normal", "blur": "sharp"}},
+    {"image_id": "real_04", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_04.jpg", "annotation": "annotations/real_04.json", "condition": {"lighting": "dim", "scale": "normal", "blur": "sharp"}},
+    {"image_id": "real_05", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_05.jpg", "annotation": "annotations/real_05.json", "condition": {"lighting": "uniform", "scale": "near", "blur": "sharp"}},
+    {"image_id": "real_06", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_06.jpg", "annotation": "annotations/real_06.json", "condition": {"lighting": "uniform", "scale": "far", "blur": "sharp"}},
+    {"image_id": "real_07", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_07.jpg", "annotation": "annotations/real_07.json", "condition": {"lighting": "uniform", "scale": "normal", "blur": "defocus"}},
+    {"image_id": "real_08", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_08.jpg", "annotation": "annotations/real_08.json", "condition": {"lighting": "uniform", "scale": "normal", "blur": "motion"}},
+    {"image_id": "real_09", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_09.jpg", "annotation": "annotations/real_09.json", "condition": {"lighting": "oblique", "scale": "normal", "blur": "sharp"}},
+    {"image_id": "real_10", "source_type": "self_captured", "reference_image": "images/reference.jpg", "scene_image": "images/real_10.jpg", "annotation": "annotations/real_10.json", "condition": {"lighting": "dim_shadow", "scale": "far", "blur": "mild_motion"}}
+  ]
+}

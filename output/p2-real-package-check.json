@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-09-18T04:10:49.444112+00:00",
+  "archive": "output/p2-real-submission.zip",
+  "archive_sha256": "49a2ffa084c801c6456e8e854374b5bc96d22809b232692606ff19657a15db59",
+  "archive_bytes": 20538727,
+  "archive_entry_count": 96,
+  "python_file_count": 1,
+  "working_photo_count": 12,
+  "annotation_file_count": 11,
+  "annotation_point_pairs": 250,
+  "crc_check": "passed",
+  "entry_hashes_and_extracted_hashes": "passed",
+  "credential_pattern_scan": "passed",
+  "clean_extraction_tests": {
+    "self_test": {
+      "status": "passed",
+      "exit_code": 0,
+      "output": "self-test: 7 metric and preprocessing checks passed\nself-test: 3 additional ROI checks passed\n"
+    },
+    "dataset_validation": {
+      "status": "passed",
+      "exit_code": 0,
+      "output": "{\n  \"samples\": 11,\n  \"annotations\": [\n    {\n      \"image_id\": \"IMG_0258\",\n      \"pairs\": 23,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 5.543731689453125\n    },\n    {\n      \"image_id\": \"IMG_0259\",\n      \"pairs\": 23,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 1.0582188367843628\n    },\n    {\n      \"image_id\": \"IMG_0261\",\n      \"pairs\": 24,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 2.6536498069763184\n    },\n    {\n      \"image_id\": \"IMG_0262\",\n      \"pairs\": 24,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 2.7533771991729736\n    },\n    {\n      \"image_id\": \"IMG_0263\",\n      \"pairs\": 24,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 2.7807745933532715\n    },\n    {\n      \"image_id\": \"IMG_0264\",\n      \"pairs\": 24,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 2.7025043964385986\n    },\n    {\n      \"image_id\": \"IMG_0265\",\n      \"pairs\": 20,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 4.586124420166016\n    },\n    {\n      \"image_id\": \"IMG_0266\",\n      \"pairs\": 24,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 2.892989158630371\n    },\n    {\n      \"image_id\": \"IMG_0267\",\n      \"pairs\": 22,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 3.507115125656128\n    },\n    {\n      \"image_id\": \"IMG_0268\",\n      \"pairs\": 20,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 3.43401837348938\n    },\n    {\n      \"image_id\": \"IMG_0269\",\n      \"pairs\": 22,\n      \"status\": \"assistant_visual_verified\",\n      \"rmse_px\": 5.465412139892578\n    }\n  ]\n}\n"
+    },
+    "assistant_annotations_rejected_by_manual_mode": {
+      "status": "passed",
+      "exit_code": 1,
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\Lichu_laptop\\Documents\\ChatGPT\\git管理\\tmp\\p2-unpack-p8r6uvqe\\p2_multiscale_feature_matching.py\", line 1592, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\Lichu_laptop\\Documents\\ChatGPT\\git管理\\tmp\\p2-unpack-p8r6uvqe\\p2_multiscale_feature_matching.py\", line 1557, in main\n    samples = load_samples(args.data_root, require_manual=args.require_manual)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Lichu_laptop\\Documents\\ChatGPT\\git管理\\tmp\\p2-unpack-p8r6uvqe\\p2_multiscale_feature_matching.py\", line 428, in load_samples\n    raise ValueError(f\"{image_id} is not marked as a manual annotation: {status}\")\nValueError: IMG_0258 is not marked as a manual annotation: assistant_visual_verified\n"
+    }
+  },
+  "deterministic_smoke_configs": {
+    "LoG": {
+      "status": "passed",
+      "image_id": "IMG_0258",
+      "frequency_filter": "none",
+      "metrics_identical_except_runtime": true
+    },
+    "SIFT": {
+      "status": "passed",
+      "image_id": "IMG_0258",
+      "frequency_filter": "gaussian_lowpass",
+      "metrics_identical_except_runtime": true
+    }
+  },
+  "pdf_visual_review": "13 pages inspected; no clipped or overlapping text found",
+  "uploaded_or_pushed": false
+}

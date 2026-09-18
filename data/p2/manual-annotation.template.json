@@ -1,0 +1,32 @@
+{
+  "image_id": "real_01",
+  "annotation_status": "pending_manual_annotation",
+  "reference_image": "images/reference.jpg",
+  "scene_image": "images/real_01.jpg",
+  "homography_scene_to_reference": null,
+  "annotator": null,
+  "verified_by": null,
+  "notes": "Replace every null coordinate with manually selected pixel coordinates; mark manual_verified only after review.",
+  "points": [
+    {"id": "p01", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p02", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p03", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p04", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p05", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p06", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p07", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p08", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p09", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p10", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p11", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p12", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p13", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p14", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p15", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p16", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p17", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p18", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p19", "label": "", "reference": [null, null], "scene": [null, null]},
+    {"id": "p20", "label": "", "reference": [null, null], "scene": [null, null]}
+  ]
+}

@@ -1,0 +1,15 @@
+成果说明
+
+本作业以12张真实拍摄的教材页面照片为输入，选取1张清晰图作参考，其余11张形成评测图对。通过助手视觉选点、局部灰度配准辅助及逐点放大核对，共保留250对同名点，每图20–24对。全部实验实现位于一个.py文件中，关键步骤附注释。
+
+实验比较Sobel、LoG、Harris、Shi-Tomasi、SIFT，并设置FFT理想/高斯低通、高通和不滤波对照；统计1–3层金字塔下的重复率、匹配正确率、定位误差和运行时间，绘制数字尺度、附加噪声、金字塔深度曲线，完成关闭金字塔、频域滤波、NMS的消融。共输出3245行逐图评测及配套报告、曲线、标注与复现记录。
+
+来源说明：照片是教材页而非板书/试卷；点对由助手制作与核对，不冒充学生亲手标注。报告已说明题材差异、助手标注来源、书页弯曲导致的近似几何误差，以及多尺度和频域处理对匹配可信度的影响。
+
+复现步骤（在解压后的提交包根目录，每条命令独立运行）：
+python -m pip install -r requirements-p2.txt
+python p2_multiscale_feature_matching.py --self-test
+python p2_multiscale_feature_matching.py --data-root data/private/p2 --validate-only
+python p2_multiscale_feature_matching.py --data-root data/private/p2 --output-root output/p2-real --figure-root figures/p2-real
+
+提交：output/p2-real-submission.zip或其中的单一.py、PDF报告、数据与标注。该ZIP不含P1代码、临时依赖或Git元数据。

@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-09-18T03:59:28.937668+00:00",
+  "image_count": 12,
+  "image_pair_count": 11,
+  "annotation_pairs_total": 250,
+  "raw_result_rows": {
+    "main_results": 825,
+    "ablation_results": 220,
+    "noise_results": 1100,
+    "scale_results": 1100
+  },
+  "total_raw_result_rows": 3245,
+  "checks": {
+    "input_hashes_and_unchanged_originals": "passed",
+    "annotations_coordinates_provenance_and_exif": "passed",
+    "csv_grid_counts_unique_keys_metrics_and_undefined_precision": "passed",
+    "noise_zero_scale_one_and_full_ablation_baselines": "passed",
+    "all_csv_summary_means_sample_std_and_valid_counts": "passed",
+    "report_all_four_numeric_tables_vs_raw_results": "passed",
+    "report_noise_and_scale_claims_vs_results": "passed",
+    "pdf_pages_and_annotation_disclosure": "passed"
+  },
+  "max_original_coordinate_rounding_error_px": 0.002637499999764259,
+  "code_sha256": "29cf402d89f4a2562605aaef43f90dd53a853947469dd9450ea6647256bde3f6",
+  "report_sha256": "635642160b3688e359c37914569e2f71d018ea7b8bf028897a98ecbed84b4e70",
+  "report_pages": 13,
+  "human_verified": false,
+  "subject_type": "textbook_page_not_board_or_exam",
+  "note": "Numeric and hash checks do not certify human hand annotations or exact board/exam subject compliance."
+}

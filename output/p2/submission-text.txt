@@ -1,0 +1,18 @@
+成果说明（合成代理数据验证版）
+
+实现文件：p2_multiscale_feature_matching.py，全部 P2 代码仅此一个 .py 文件，关键步骤含注释。
+
+完成 Sobel、LoG、Harris、Shi-Tomasi、SIFT 五类完整特征匹配管线；对比不滤波、FFT 理想低通/高通、高斯低通/高通，采用 1/2/3 层外部图像金字塔，并统计共同可见区域的特征重复率、双向比例检验后的匹配正确率、条件定位误差和运行时间。实验共 2,950 行评测，输出重复率—数字尺度、重复率—附加噪声、重复率—外部层数曲线及关闭金字塔/频域滤波/共同 NMS 的消融结果。报告给出公式、实测表格、曲线及计算摄影链路讨论；各方法使用的描述子差异、SIFT 内部尺度空间仍开启、无匹配统计和单次计时均有说明。
+
+当前数据为 10 组程序生成的参考/场景图，共 20 张 PNG，每组 32 对生成控制点。不是自采照片，控制点也不是人工标注，因此尚未满足课程要求的“自采至少 10 张、每图手工标注至少 20 对同名点”。本成果仅用于验证实现及参数敏感性，不应宣称完整完成数据条件。真实采集和逐点人工复核后应重跑实验并同步更新报告，不能仅改来源字段或沿用合成数值。
+
+复现（Python 3.12）：
+python -m pip install -r requirements-p2.txt
+python p2_multiscale_feature_matching.py --self-test
+python p2_multiscale_feature_matching.py --validate-only
+python p2_multiscale_feature_matching.py --data-root data/p2
+
+附件：output/pdf/p2-report.pdf、单一 .py、output/p2-submission.zip、数据/标注 JSON、逐图 CSV、PDF/SVG/PNG 曲线。真实采集和人工标注模板见 data/p2/，模板是采集计划和空标注，不是已经完成的采集证据。
+
+仓库地址：https://github.com/2533598727/Machine-Vision
+本地成果未自动提交或推送到 GitHub；如需填写仓库已上传内容，应先实际提交、推送并核验远端。

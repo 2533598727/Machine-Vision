@@ -1,0 +1,83 @@
+{
+  "reference_file": "IMG_0260.JPG",
+  "working_size": [960, 1280],
+  "annotation_status": "assistant_visual_selected",
+  "annotator": "Codex assistant: direct visual landmark selection",
+  "human_verified": false,
+  "notes": "Coordinates were individually selected from native-resolution photo previews. No evaluated detector was used to generate correspondences. Assistant annotations are not certified human hand annotations.",
+  "labels": [
+    "chapter underline left endpoint", "chapter underline right endpoint",
+    "digit 5 top left corner", "digit 5 top right corner",
+    "UML cube top vertex", "UML cube upper left vertex", "UML cube upper right vertex",
+    "UML cube three-face junction", "UML cube lower left vertex", "UML cube bottom vertex",
+    "introduction label upper right corner", "introduction label lower right corner",
+    "objectives label upper right corner", "objectives label lower right corner",
+    "objective bullet 1 center", "objective bullet 2 center", "objective bullet 3 center", "objective bullet 4 center",
+    "gray printed banner upper left corner", "gray printed banner lower left corner",
+    "title first character left upper stroke", "title first box character upper left corner",
+    "title fourth character upper left stroke", "title third character upper left stroke"
+  ],
+  "photos": {
+    "IMG_0258.JPG": {
+      "exclude_points": ["p23"],
+      "condition": {"capture_group": "near laptop", "visible_blur": "low", "notes": "Close view, cool illumination; right page cropped."},
+      "points": [[145,256],[287,289],[218,212],[237,214],[196,310],[137,322],[247,337],[190,353],[124,407],[183,445],[196,495],[194,515],[170,718],[168,734],[105,736],[103,752],[101,767],[98,782],[126,156],[80,440],[346,403],[372,401],[428,427],[403,412]]
+    },
+    "IMG_0259.JPG": {
+      "exclude_points": ["p18"],
+      "condition": {"capture_group": "aisle", "visible_blur": "low", "notes": "More distant view, oblique page, diagonal shadow."},
+      "points": [[290,371],[381,398],[338,340],[349,343],[329,417],[291,420],[350,443],[321,443],[281,479],[312,517],[308,542],[306,556],[261,704],[258,716],[221,710],[218,720],[214,731],[211,742],[309,310],[252,497],[408,485],[429,494],[483,517],[455,505]]
+    },
+    "IMG_0260.JPG": {
+      "condition": {"capture_group": "reference", "visible_blur": "low", "notes": "Reference photograph; full book visible."},
+      "points": [[242,444],[309,429],[263,399],[270,398],[273,473],[238,494],[299,483],[269,504],[247,552],[276,575],[292,597],[293,611],[300,761],[300,776],[265,787],[264,799],[263,811],[262,823],[218,386],[240,580],[356,498],[371,494],[422,494],[398,494]]
+    },
+    "IMG_0261.JPG": {
+      "condition": {"capture_group": "cabinet", "visible_blur": "low", "notes": "Close tilted view; left margin partly outside frame."},
+      "points": [[85,340],[232,362],[144,300],[165,303],[124,383],[65,393],[179,410],[119,423],[52,477],[109,516],[132,542],[130,561],[96,766],[94,780],[10,797],[7,815],[4,833],[1,851],[44,243],[13,500],[272,449],[297,444],[356,460],[330,451]]
+    },
+    "IMG_0262.JPG": {
+      "condition": {"capture_group": "cabinet", "visible_blur": "mild", "notes": "Tilted view with slightly softer fine text."},
+      "points": [[137,385],[259,406],[196,338],[213,340],[180,416],[122,425],[232,444],[178,455],[109,491],[164,530],[182,563],[179,581],[144,769],[141,785],[69,789],[66,806],[62,822],[59,838],[110,291],[69,523],[321,477],[349,474],[404,490],[377,484]]
+    },
+    "IMG_0263.JPG": {
+      "condition": {"capture_group": "desk", "visible_blur": "mild", "notes": "Oblique close view with bright right-side light."},
+      "points": [[176,405],[315,428],[253,370],[271,372],[236,447],[165,453],[281,469],[229,484],[153,521],[219,560],[236,593],[233,609],[191,789],[188,803],[124,819],[121,835],[118,851],[114,868],[163,323],[116,550],[363,509],[386,504],[446,524],[417,515]]
+    },
+    "IMG_0264.JPG": {
+      "condition": {"capture_group": "desk", "visible_blur": "low", "notes": "Larger front-facing page; brightness and curvature differ."},
+      "points": [[129,404],[261,426],[195,366],[215,367],[180,443],[119,451],[223,465],[176,480],[108,522],[165,558],[188,589],[185,607],[155,789],[153,803],[82,818],[79,834],[76,850],[73,866],[111,322],[60,550],[304,499],[326,496],[386,511],[356,501]]
+    },
+    "IMG_0265.JPG": {
+      "exclude_points": ["p15", "p16", "p17", "p18"],
+      "condition": {"capture_group": "cabinet motion", "visible_blur": "noticeable", "notes": "Motion-softened view; lower left bullets outside frame, replaced with visible printed strokes."},
+      "points": [[69,284],[198,330],[140,261],[159,266],[106,332],[52,330],[166,366],[106,368],[31,411],[83,455],[96,493],[91,511],[43,679],[37,696],[69,361],[79,416],[146,398],[150,442],[61,211],[182,294],[243,436],[263,440],[309,464],[286,453]],
+      "overrides": {
+        "p15": {"label": "U letter upper left stroke", "reference": [246,502]},
+        "p16": {"label": "U letter bottom curve", "reference": [265,548]},
+        "p17": {"label": "L letter upper left stroke", "reference": [298,495]},
+        "p18": {"label": "L letter right foot endpoint", "reference": [309,539]},
+        "p20": {"label": "chapter character upper central stroke", "reference": [289,417]}
+      }
+    },
+    "IMG_0266.JPG": {
+      "condition": {"capture_group": "warm aisle", "visible_blur": "low", "notes": "More distant view, warmer light, slanted page."},
+      "points": [[262,356],[359,395],[312,338],[326,343],[285,399],[238,397],[312,432],[270,430],[216,448],[261,497],[263,523],[258,538],[197,675],[192,690],[139,688],[135,701],[131,713],[127,725],[251,291],[179,465],[383,485],[405,489],[449,519],[428,509]]
+    },
+    "IMG_0267.JPG": {
+      "exclude_points": ["p19", "p23"],
+      "condition": {"capture_group": "strong side view", "visible_blur": "mild", "notes": "Strong in-plane rotation, page curvature and shadow."},
+      "points": [[396,376],[475,462],[451,389],[458,397],[381,401],[350,435],[438,461],[392,461],[378,484],[418,521],[346,516],[337,528],[254,622],[247,636],[196,618],[188,627],[180,637],[172,647],[425,323],[301,448],[465,525],[484,536],[514,568],[504,553]]
+    },
+    "IMG_0268.JPG": {
+      "exclude_points": ["p17", "p18", "p19", "p23"],
+      "condition": {"capture_group": "strong side view", "visible_blur": "noticeable", "notes": "Strong rotation, softer image and rolled inner margin."},
+      "points": [[454,423],[514,507],[495,455],[502,462],[425,452],[401,487],[467,515],[433,513],[418,534],[455,557],[386,548],[379,558],[263,653],[256,665],[217,649],[208,658],[199,667],[190,676],[468,377],[351,484],[513,580],[531,593],[569,631],[550,611]]
+    },
+    "IMG_0269.JPG": {
+      "exclude_points": ["p19", "p23"],
+      "condition": {"capture_group": "strong side view", "visible_blur": "low", "notes": "Rotated side view, clearer than IMG_0268, substantial curvature near spine."},
+      "points": [[450,317],[522,386],[496,333],[504,339],[418,340],[385,377],[449,397],[414,392],[399,415],[440,448],[390,470],[382,481],[278,586],[269,599],[229,576],[220,586],[211,595],[203,605],[465,251],[340,382],[519,473],[538,483],[569,515],[554,501]]
+    }
+  }
+}

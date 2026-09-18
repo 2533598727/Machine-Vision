@@ -1,0 +1,173 @@
+% !TEX root = p2-report.tex
+\input{latex-preamble.tex}
+\usepackage{booktabs,tabularx,caption}
+\IfFontExistsTF{SimSun}{\setCJKmonofont{SimSun}}{\IfFontExistsTF{Noto Sans CJK SC}{\setCJKmonofont{Noto Sans CJK SC}}{\setCJKmonofont{FandolFang-Regular}}}
+\captionsetup{font=small,labelfont=bf,skip=5pt}
+\hypersetup{pdftitle={板书图像多尺度特征匹配质量评测：可重复性消融实验},pdfsubject={Machine Vision P2 synthetic validation}}
+\fancyhead[L]{\small\color{muted}Machine Vision / P2}
+\fancyhead[R]{\small\color{muted}多尺度特征匹配消融实验}
+\graphicspath{{../figures/p2/}}
+\linespread{1.25}
+\newcommand{\filepath}[1]{\nolinkurl{#1}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\Sset}{\mathcal{S}}
+\newcommand{\Mset}{\mathcal{M}}
+
+\begin{document}
+\begin{center}
+{\LARGE\bfseries 板书图像多尺度特征匹配质量评测}\par
+\vspace{3mm}
+{\large 可重复性消融实验}\par
+\vspace{2mm}
+{\small Lab2 / 第 3 周 / 周四 \qquad 2026 年 9 月 18 日}\par
+{\small 合成代理数据验证版}
+\end{center}
+
+\begin{abstract}
+面向拍摄板书与扫描试卷中的特征不稳定问题，建立单文件评测流程，比较 Sobel、LoG、Harris、Shi-Tomasi 和 SIFT 五类完整匹配管线，考察理想及高斯低通、高通预处理、外部图像金字塔与非极大值抑制的作用。采用共同可见区域内的几何重复率、双向比例检验后的匹配正确率、条件定位误差和每图对运行时间，并绘制图像尺度、附加噪声及金字塔深度曲线。实验对象为十组程序生成的试卷风格图像，几何控制点由生成器给出。结果用于验证评测口径及分析参数敏感性，不作为真实板书效果的证明。对预处理和多尺度的评价应同时考虑空间覆盖、误差、匹配数量与时间，不能仅由一项比例指标判定可信度。当前材料未包含自采照片或人工同名点标注，因而尚未满足作业的数据采集条件。
+\end{abstract}
+
+\section{任务范围与数据边界}
+作业要求不少于十张不同光照、尺度、模糊条件的自采板书或试卷图像，并为每张场景图相对于参考图手工标注至少二十对同名点。当前仓库没有这类照片，因此本报告只陈述实际完成的合成代理实验，不将生成控制点称为人工标注。
+
+代理集含十组参考/场景图，共二十张 $960\times720$ PNG，每组有三十二对生成控制点。内容包括文字、线框、交叉线与图形，十组共享基本版式但改变文字、颜色和部分细节；场景引入透视扰动、光照变化、尺度、模糊与噪声。原生尺度因子为 $0.86$ 至 $1.06$，高斯模糊参数为 $0$ 至 $2.0$ 像素，原生附加噪声标准差为 $1$ 至 $12$ 灰度级。各因素在这些样本中同时变化，不能由逐图比较单独归因于某一种原生扰动。
+
+数据清单将来源记为 \filepath{synthetic_procedural}，标注状态记为 \filepath{generated_control_points_not_manual}。合成数据使用生成时的场景到参考单应矩阵 $H$，其控制点重投影误差只验证坐标一致性，不代表人工标注质量。实际采集时可共用清晰正视参考图；未提供 $H$ 时，程序以全部人工点拟合单应矩阵，并输出重投影 RMSE。该拟合残差不是独立测试误差，纸面弯曲、镜头畸变或误标都可能使平面模型失效。
+
+\section{方法与单文件实现}
+全部 P2 实现位于 \filepath{p2_multiscale_feature_matching.py}，包括代理数据生成、清单校验、特征与描述子、匹配、指标、曲线和自检。流程为灰度读取、各金字塔层缩放、频域预处理、特征提取、坐标回映射与融合、共同可见区域筛选、描述子匹配和几何评估。关键步骤使用中文注释，报告及数据文件不增加第二个 Python 实现。
+
+\subsection{空域响应与描述子}
+Sobel 先作 $3\times3$ 高斯平滑，再计算 $3\times3$ 导数核，响应为
+\begin{equation}
+r_{\mathrm{Sobel}}(x,y)=\sqrt{I_x(x,y)^2+I_y(x,y)^2}.
+\end{equation}
+该操作强调灰度变化\cite{sobel}，本实验将高响应位置采样为点；它并非与角点检测器完全等价的兴趣点定义。
+
+LoG 以标准差 $1.2$ 的高斯平滑后接 $3\times3$ 离散 Laplacian，取绝对响应：
+\begin{equation}
+r_{\mathrm{LoG}}(x,y)=\left|\nabla^2(G_{1.2}*I)(x,y)\right|.
+\end{equation}
+这里实现的是固定层内尺度的平滑后二阶响应采样，而非零交叉边缘检测或尺度归一化 LoG 斑点检测。OpenCV 的 Laplace 教程给出二阶导数形式并演示平滑后计算\cite{laplace}。
+
+角点方法用局部结构张量及其特征值 $\lambda_1,\lambda_2$：
+\begin{equation}
+M=\sum_{(x,y)\in W}w(x,y)
+\begin{bmatrix}I_x^2&I_xI_y\\I_xI_y&I_y^2\end{bmatrix},\qquad
+r_H=\det(M)-0.04\,\mathrm{tr}(M)^2,\quad
+r_{ST}=\min(\lambda_1,\lambda_2).
+\end{equation}
+$W$ 为局部窗口，$w$ 为窗口权重。Harris 使用 \filepath{cornerHarris}，邻域宽二、导数核宽三，仅保留正响应；Shi-Tomasi 使用邻域宽三、导数核宽三的 \filepath{cornerMinEigenVal}。两种评分的定义可见官方教程\cite{harris,shi}。不直接调用带内置距离筛选的 \filepath{goodFeaturesToTrack}，以便显式切换共同 NMS。
+
+SIFT 调用 OpenCV \filepath{SIFT_create}，每层候选预算二百二十，参数为 \filepath{contrastThreshold=0.01}、\filepath{edgeThreshold=10}、\filepath{sigma=1.2}。其尺度空间极值、方向分配和原生一百二十八维描述子与官方介绍一致\cite{sift}；本实验使用的是 OpenCV 实现，不是从零重写 SIFT。
+
+其余四种方法取 $32\times32$ 邻域，面积缩放为 $16\times16$，去均值并作 $L_2$ 归一化，得到二百五十六维补丁描述子；近常量补丁被舍弃。该描述子没有 SIFT 的方向与尺度规范化，因此方法比较针对完整管线，不能将匹配正确率差异只归于检测器。
+
+\subsection{频域预处理}
+令 $F=\mathrm{fftshift}(\mathrm{FFT2}(I/255))$，滤波后图像为
+\begin{equation}
+J=\Re\left\{\mathrm{IFFT2}\left[\mathrm{ifftshift}(T\odot F)\right]\right\}.
+\end{equation}
+$T$ 为传递函数，$\odot$ 为逐元素乘积。该移频、掩模、逆移频与逆变换链路参照官方 Fourier 教程\cite{fourier}。频率半径使用移频后的整数直流中心，奇数宽高也用整除。若当前层宽高为 $w,h$，令
+\begin{align}
+D(u,v)&=\sqrt{(u-\lfloor w/2\rfloor)^2+(v-\lfloor h/2\rfloor)^2},\\
+T_{IL}&=\mathbf{1}[D\leq0.12\min(w,h)],&T_{IH}&=1-T_{IL},\\
+T_{GL}&=\exp\left[-\frac{D^2}{2\{0.10\min(w,h)\}^2}\right],&T_{GH}&=1-T_{GL}.
+\end{align}
+$IL,IH,GL,GH$ 分别表示理想低通、理想高通、高斯低通和高斯高通。另设不滤波对照。截止半径按层尺寸变化，比例为本实验约定，并非普适最优值。低通结果裁剪到 $[0,1]$；高通结果按每图百分之一至百分之九十九分位作线性映射，再转为八位灰度。因此高通比较包含自适应对比度归一化，不是仅替换线性滤波核。未作 FFT 边界填充，周期边界假设也属于实现限制。
+
+\subsection{多尺度融合与 NMS}
+外部金字塔深度 $L\in\{1,2,3\}$，层内尺寸比例为 $2^{-l}$，$l=0,\ldots,L-1$；粗层以 \filepath{INTER_AREA} 面积缩放生成，不声称实现了严格的连续高斯尺度空间。每层分别预处理和提取，按实际尺寸比例将坐标映回原图。横坐标为
+\begin{equation}
+x_0=(x_l+0.5)\frac{w_0}{w_l}-0.5,
+\end{equation}
+纵坐标同理。半像素项与 OpenCV resize 的像素中心约定一致，避免直接乘二导致粗层定位偏移。四种响应采样方法的各层响应独立归一化，SIFT 保留原生响应分数；融合时乘 $1/(1+0.2l)$，所有层共享最终二百二十点预算，因此增加层数不等于增加最终点数。
+
+四种响应采样方法固定使用第九十九百分位阈值；开启 NMS 时先保留 $5\times5$ 局部最大响应，再对融合点按分数降序实施五原图像素的距离抑制。关闭 NMS 不改变阈值和最终预算，同时关闭这两步。SIFT 的 NMS 消融只关闭共同后处理距离抑制，内部 DoG 极值筛选仍保留；同样，关闭外部金字塔并不关闭 SIFT 的内部尺度空间。
+
+\section{指标定义与实验控制}
+令 $\pi_H(q)$ 为场景点 $q$ 经 $H$ 映到参考坐标后的非齐次位置，距离
+\begin{equation}
+e(p,q)=\|p-\pi_H(q)\|_2
+\end{equation}
+始终以参考图像素计量。先筛去经双向几何映射落到另一幅图像范围外的点，得到共同可见区域的点集 $\R,\Sset$，避免将不可见裁切位置计入分母。该筛选检查中心点，不保证描述子窗口全部位于共同区域。
+
+\subsection{重复率与定位误差}
+枚举 $e(p,q)\leq\epsilon_r$ 的候选点对，按距离从小到大贪心保留一对一关系，得到 $\Mset_r$，其中 $\epsilon_r=5$ 像素。定义
+\begin{equation}
+\mathrm{Rep}=\frac{|\Mset_r|}{\min(|\R|,|\Sset|)},\qquad
+E_{\mathrm{loc}}=\mathrm{median}_{(p,q)\in\Mset_r}e(p,q).
+\end{equation}
+分母为零时重复率记零；无重复点时定位误差记为未定义。贪心配对不是最大基数二分匹配，也不是全局最优分配；该口径在所有设置中固定使用。定位误差仅针对五像素以内被重复检测的点，不是全部匹配或全部标注点的定位精度，低误差必须结合覆盖与重复点数解读。
+
+\subsection{匹配正确率与时间}
+描述子以 $L_2$ 最近邻匹配；正反方向均要求最近邻/次近邻距离比小于 $0.78$，且互为最近邻，得到接受集 $\Mset_a$。不使用被测匹配估计 $H$ 再自我判断正确性。定义
+\begin{equation}
+\mathrm{Prec}=\frac{\sum_{(p,q)\in\Mset_a}\mathbf{1}[e(p,q)\leq4]}{|\Mset_a|},\qquad
+t=1000(t_{\mathrm{end}}-t_{\mathrm{start}})\ \mathrm{ms}.
+\end{equation}
+无接受匹配时正确率未定义而不是零，CSV 中为 \filepath{nan}、JSON 中为 \filepath{null}。汇总只平均有限值，并附有效样本数；这不是把全部匹配池化后的总体正确率。逐图文件同时保留接受匹配数、正确匹配数、几何重复数、原始及可见区域点数和匹配误差，便于发现少量点导致的高比例。
+
+计时覆盖两幅图的预处理、检测、描述、几何评估和匹配，不含磁盘 I/O；每个图对/配置只计时一次，没有预热或多次重复，跨十图的标准差是样本差异，不是计时稳定性置信区间。OpenCV 固定单线程。
+
+\subsection{实验矩阵与可重复性}
+主矩阵为十图对、五方法、五预处理与三个外部深度，共七百五十行。消融以高斯低通、三层、NMS 开启为 \filepath{full}，分别关闭外部金字塔、频域滤波或共同 NMS，共二百行。尺度实验固定三层与 NMS，仅将场景图额外缩放至 $0.5,0.75,1.0,1.25$ 倍，参考不变，并同步组合逆 resize 与 $H$，共一千行。尺度横轴表示数字重采样倍率，不是实测焦距或拍摄距离。
+
+噪声实验对场景图额外加入标准差 $0,5,10,20$ 灰度级的高斯噪声，原生扰动仍保留，共一千行。参考图不加噪；所有方法及滤波共用同一样本的噪声实例，同一标准随机场仅改变振幅，随后裁剪到八位范围。随机种子固定为 $20260917$。曲线均值及误差棒按十图汇总，误差棒是样本标准差，不是置信区间。
+
+本次环境为 Python 3.12.14、OpenCV 4.14.0、NumPy 2.5.3、Matplotlib 3.11.2、Pillow 12.3.0；精确发行包版本见 \filepath{requirements-p2.txt}。\filepath{summary.json} 记录参数、平台、线程数、完成时间以及代码、图像和标注 SHA-256。内置自检覆盖低通直流保持、高通去直流、NMS、共同可见区域、一对一配对、数值排序、无匹配口径及噪声确定性等行为。
+
+\clearpage
+\input{p2-results.tex}
+
+\clearpage
+\section{计算摄影链路与可信度讨论}
+板书或试卷的匹配结果并非只由末端检测器决定。可将关注链路写为“内容与照明、成像光学与运动、采样和图像处理、频域/多尺度预处理、特征与描述子、匹配和几何判定”。本实验只模拟部分后端图像变化，没有采集 RAW、标定真实噪声、复现相机 ISP 或测量下游 OCR；以下机制解释是与算法及代理现象一致的工作假设，不是由当前消融证明的物理因果关系。
+
+照明的缓慢变化与细笔画、边缘的快速变化占据不同频率范围，但真实信号与噪声并不按频率完全分离。低通可能抑制高频扰动，也会牺牲细笔画及局部对比度；高通可能削弱平缓亮度变化，同时增强噪声并改变描述子的灰度分布。官方 Fourier 教程讨论了图像边缘、噪声的高频成分及突变掩模相关振铃\cite{fourier}。本实现使用圆形理想截止，不能把教程中的矩形掩模现象当作本数据上已量化的振铃证据。
+
+多尺度的作用一方面是以粗层降低局部扰动，另一方面是改变有效邻域与特征预算分配。对补丁描述子，粗层采样意味着更大的原图支持域；对 SIFT，外部层叠加在已存在的内部尺度空间之外。若新增粗层候选挤占原图层稳定位置，或粗层细笔画已丢失，则重复率不一定上升。当前的响应归一化和层权重也是这一融合策略的一部分，不能把观察到的变化解释为所有图像金字塔的共同规律。
+
+NMS 的价值不只在于改变点数，而在于减少近邻重复响应、改善空间覆盖及描述子唯一性。关闭它可能在同一笔画附近产生很多几何上接近的点，影响比例检验的最近/次近邻关系。因此可信度至少应联合检查重复率、定位误差、接受和正确匹配数量、分布覆盖及运行时间。即使正确率很高，少量或集中在一处的匹配仍不足以支持稳定几何估计。本实验没有估计置信概率，正确率也不是某一个具体匹配的概率校准值。
+
+\section{局限与后续真实采集}
+首先，十图共享程序版式，且仅覆盖已设定的扰动；生成控制点与已知 $H$ 给出理想几何参照，无法代替真实拍摄中的畸变、反光、压缩、复杂笔迹或人工误标。因此结论只适用于这套代理数据和参数，不宣称某方法普遍优于其他方法。
+
+其次，SIFT 与其他方法的描述子不同，且关闭外部 NMS/金字塔时内部机制仍在；当前实验回答完整管线在共同预算下如何变化，不是检测器的纯净因果比较。若需要更严格的检测器消融，可另作共同描述子评测，但那属于新的实验而非本报告已经完成的结果。
+
+第三，重复率采用贪心配对，定位误差是条件统计，运行时间仅一次测量。正式分析还应复测计时、查看逐图差异，并考虑以全局一对一分配作敏感性检查；当前不报告显著性检验或独立原稿上的泛化收益。
+
+满足课程数据条件的直接步骤是实际采集不少于十张场景照片，按真实情况记录条件，与清晰参考图逐对手工标注至少二十点并复核。仓库提供 \filepath{real-manifest.template.json} 和含二十个空点对的 \filepath{manual-annotation.template.json}，空值不能通过校验。仅在确实完成采集和复核后标记 \filepath{self_captured} 与 \filepath{manual_verified}。程序的严格校验可查字段和坐标，不可能鉴定数据来源真实性。真实结果应写入独立输出目录，并替换报告结果与结论，不能沿用本报告的合成数值。
+
+\section{结论与复现步骤}
+本次完成了单文件 P2 评测实现、三项单因素消融、尺度与噪声曲线，以及逐图指标和可核对的运行记录。实验支持的结论是：滤波、尺度融合和 NMS 需要按完整匹配管线及共同预算评价，关闭某一组件不必然降低所有指标；可信度不能简化为重复率、正确率或定位误差中的单一数值。自采和人工标注尚未完成，所以本材料是可复现的代理验证版，而非已满足全部数据要求的最终作业。
+
+\noindent\begin{minipage}{\linewidth}
+使用 Python 3.12 创建独立环境，在仓库或提交包根目录运行：
+\begin{verbatim}
+python -m pip install -r requirements-p2.txt
+python p2_multiscale_feature_matching.py --self-test
+python p2_multiscale_feature_matching.py --validate-only
+python p2_multiscale_feature_matching.py --data-root data/p2
+\end{verbatim}
+\end{minipage}
+已有 PNG 是严格复现优先输入，重新生成会受系统字体影响。切换真实数据时先校验，保留代理结果：
+\begin{verbatim}
+python p2_multiscale_feature_matching.py \
+  --data-root data/private/p2 --require-manual --validate-only
+python p2_multiscale_feature_matching.py \
+  --data-root data/private/p2 --require-manual \
+  --output-root output/p2-real --figure-root figures/p2-real
+\end{verbatim}
+上面的续行反斜杠适用于 POSIX shell；PowerShell 应将各命令写成一行。输出包含 \filepath{main_results.csv}、\filepath{ablation_results.csv}、\filepath{scale_results.csv}、\filepath{noise_results.csv}，以及汇总和 PDF/SVG/PNG 图表。报告不参与数值计算；重新运行后应根据新 CSV 同步更新报告。提交包仅含一个 \filepath{.py}，排除 P1 实现、临时运行库和 Git 元数据。
+
+\begin{thebibliography}{9}
+\small
+\bibitem{sobel} Ana Huam\'{a}n（原作者），OpenCV contributors（维护）. Sobel Derivatives. OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.markdown}{固定版本源码}。
+\bibitem{laplace} Ana Huam\'{a}n（原作者），OpenCV contributors（维护）. Laplace Operator. OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/tutorials/imgproc/imgtrans/laplace_operator/laplace_operator.markdown}{固定版本源码}。
+\bibitem{harris} OpenCV contributors. Harris Corner Detection. OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/py_tutorials/py_feature2d/py_features_harris/py_features_harris.markdown}{固定版本源码}。
+\bibitem{shi} OpenCV contributors. Shi-Tomasi Corner Detector \& Good Features to Track. OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/py_tutorials/py_feature2d/py_shi_tomasi/py_shi_tomasi.markdown}{固定版本源码}。
+\bibitem{sift} OpenCV contributors. Introduction to SIFT (Scale-Invariant Feature Transform). OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.markdown}{固定版本源码}。
+\bibitem{fourier} OpenCV contributors. Fourier Transform. OpenCV 官方教程源码，访问日期 2026-09-18。\href{https://github.com/opencv/opencv/blob/cf66d2c6add2e94396eabcaf5e85a4578dc3636b/doc/py_tutorials/py_imgproc/py_transforms/py_fourier_transform/py_fourier_transform.markdown}{固定版本源码}。
+\end{thebibliography}
+\end{document}
